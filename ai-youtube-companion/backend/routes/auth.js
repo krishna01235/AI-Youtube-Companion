@@ -3,7 +3,7 @@ const passport = require('passport');
 const router = express.Router();
 
 router.get('/google', 
-  passport.authenticate('google', { scope: ['profile', 'email'] })
+  passport.authenticate('google', { scope: ['profile', 'email', 'openid'] })
 );
 
 const FRONTEND_URL = process.env.FRONTEND_URL; 
