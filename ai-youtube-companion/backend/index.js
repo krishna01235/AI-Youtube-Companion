@@ -30,7 +30,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 const FRONTEND_URL = process.env.FRONTEND_URL; // https://ai-youtube-companion.vercel.app
-const BACKEND_URL = process.env.BACKEND_URL;   // https://ai-youtube-companion.onrender.com (or localhost for dev)
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;   // https://ai-youtube-companion.onrender.com (or localhost for dev)
 
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
