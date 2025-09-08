@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
 const backendURL = import.meta.env.VITE_BACKEND_URL;
 
 const login = () => {
-  window.location.href = `${backendURL}/auth/google`;
+  window.location.href = `${backendURL}/auth/google/callback`;
 };
   const logout = async () => {
     try {

@@ -35,7 +35,7 @@ const BACKEND_URL = process.env.BACKEND_URL;   // https://ai-youtube-companion.o
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: `https://ai-youtube-backend.onrender.com/auth/google/callback`, 
+  callbackURL: `${process.env.BACKEND_URL}/auth/google/callback`, 
 }, async (accessToken, refreshToken, profile, done) => {
   // In a real app, save user to database
   const user = {
