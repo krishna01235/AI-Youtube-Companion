@@ -7,7 +7,7 @@ import Dashboard from './pages/Dashboard'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 
 // Configure axios defaults
-axios.defaults.baseURL = 'http://localhost:5000'
+axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 axios.defaults.withCredentials = true
 
 function App() {

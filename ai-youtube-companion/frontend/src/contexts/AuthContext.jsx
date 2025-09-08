@@ -32,11 +32,11 @@ export const AuthProvider = ({ children }) => {
       setLoading(false)
     }
   }
+const backendURL = import.meta.env.VITE_BACKEND_URL;
 
-  const login = () => {
-    window.location.href = 'http://localhost:5000/auth/google'
-  }
-
+const login = () => {
+  window.location.href = `${backendURL}/auth/google`;
+};
   const logout = async () => {
     try {
       await axios.post('/auth/logout')

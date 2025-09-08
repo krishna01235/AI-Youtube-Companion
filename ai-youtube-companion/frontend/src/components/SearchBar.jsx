@@ -15,7 +15,7 @@ const SearchBar = ({ onResults, onVideoSelect, results }) => {
     setIsSearching(true)
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/youtube/search?q=${encodeURIComponent(query)}`,
+        `https://ai-youtube-companion.vercel.app/api/youtube/search?q=${encodeURIComponent(query)}`,
         { withCredentials: true } // ✅ send session cookie for protected routes
       )
 
