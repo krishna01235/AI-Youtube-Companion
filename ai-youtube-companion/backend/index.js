@@ -24,7 +24,7 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'your-secret-key',
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false } // Set to true in production with HTTPS
+  cookie: { secure: true } // Set to true in production with HTTPS
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -83,5 +83,5 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
+console.log("Client ID:", process.env.GOOGLE_CLIENT_ID);
 module.exports = app;
