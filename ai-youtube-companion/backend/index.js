@@ -29,12 +29,13 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-const FRONTEND_URL = process.env.FRONTEND_URL;
-// Passport configuration
+const FRONTEND_URL = process.env.FRONTEND_URL; // https://ai-youtube-companion.vercel.app
+const BACKEND_URL = process.env.BACKEND_URL;   // https://ai-youtube-companion.onrender.com (or localhost for dev)
+
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: `${BACKEND_URL}/auth/google/callback`
+  callbackURL: `${BACKEND_URL}/auth/google/callback`, 
 }, async (accessToken, refreshToken, profile, done) => {
   // In a real app, save user to database
   const user = {
