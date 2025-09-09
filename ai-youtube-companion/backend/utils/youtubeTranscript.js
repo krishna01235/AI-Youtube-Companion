@@ -41,6 +41,16 @@ async function getTranscript(videoUrlOrId, language = "en") {
         playerData?.captions?.playerCaptionsTracklistRenderer?.captionTracks ||
         playerData?.captions?.playerCaptionsRenderer?.captionTracks;
 
+      // Log all available caption tracks for diagnosis
+      console.log(`Caption tracks found with client ${client.clientName}:`);
+      if (tracks && tracks.length > 0) {
+        tracks.forEach((t, i) => {
+          console.log(`Track ${i + 1}: languageCode=${t.languageCode}, name=${t.name?.simpleText || 'N/A'}, kind=${t.kind || 'manual'}, baseUrl=${t.baseUrl}`);
+        });
+      } else {
+        console.log("No caption tracks found.");
+      }
+
       if (!tracks || tracks.length === 0) throw new Error(`No captions found with client ${client.clientName}`);
 
       // Pick requested language or default to first
