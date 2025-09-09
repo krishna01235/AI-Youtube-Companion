@@ -2,14 +2,6 @@ const express = require('express');
 const { generateSummary, answerQuestion } = require('../utils/geminiClient');
 const router = express.Router();
 
-// Temporarily remove auth requirement for testing
-// const requireAuth = (req, res, next) => {
-//   if (!req.user) {
-//     return res.status(401).json({ success: false, message: 'Authentication required' });
-//   }
-//   next();
-// };
-
 router.post('/summarize', async (req, res) => {
   try {
     const { transcript, videoId, videoTitle } = req.body;
@@ -23,14 +15,12 @@ router.post('/summarize', async (req, res) => {
 
     const summary = await generateSummary(transcript);
     
-    // Match the expected response format
     const summaryData = {
       id: Date.now().toString(),
       videoId,
       videoTitle,
       summary,
       timestamp: new Date().toISOString(),
-      // userId: req.user?.id || 'anonymous' // Commented out for now
     };
 
     res.json({
@@ -46,7 +36,6 @@ router.post('/summarize', async (req, res) => {
   }
 });
 
-// Answer question based on transcript  
 router.post('/question', async (req, res) => {
   try {
     const { transcript, question } = req.body;

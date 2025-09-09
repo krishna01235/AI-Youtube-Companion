@@ -1,20 +1,12 @@
-// backend/utils/geminiClient.js
 const { GoogleGenAI } = require('@google/genai');
-
-// Initialize Gemini
 const genAI = new GoogleGenAI({
-  vertexai: false, // Use Gemini Developer API
+  vertexai: false, 
   apiKey: process.env.GEMINI_API_KEY
 });
 
-/**
- * Generate video summary using Gemini
- */
 const generateSummary = async (transcript, options = {}) => {
   try {
     const { maxLength = 8000, model = 'gemini-2.0-flash-exp' } = options;
-    
-    // Truncate transcript if too long
     let textToSummarize = transcript;
     if (transcript.length > maxLength) {
       textToSummarize = transcript.substring(0, maxLength) + '...';
@@ -32,8 +24,6 @@ Keep the summary concise but informative, focusing on the most valuable content.
 
 Transcript:
 ${textToSummarize}`;
-
-    console.log('🤖 Generating Gemini summary...');
     
     const response = await genAI.models.generateContent({
       model: model,
@@ -46,13 +36,11 @@ ${textToSummarize}`;
       throw new Error('Empty response from Gemini');
     }
     
-    console.log('✅ Summary generated successfully');
+    console.log('Summary generated successfully');
     return summary;
     
   } catch (error) {
-    console.error('❌ Gemini summary error:', error);
-    
-    // Handle specific Gemini errors
+    console.error(' Gemini summary error:', error);
     if (error.message?.includes('API_KEY')) {
       throw new Error('Invalid or missing Gemini API key');
     } else if (error.message?.includes('QUOTA_EXCEEDED')) {
@@ -66,15 +54,9 @@ ${textToSummarize}`;
     throw new Error(`Summary generation failed: ${error.message}`);
   }
 };
-
-/**
- * Answer questions about video content using Gemini
- */
 const answerQuestion = async (transcript, question, options = {}) => {
   try {
     const { maxLength = 6000, model = 'gemini-2.0-flash-exp' } = options;
-    
-    // Truncate transcript for question answering
     let contextText = transcript;
     if (transcript.length > maxLength) {
       contextText = transcript.substring(0, maxLength) + '...';
@@ -95,7 +77,7 @@ User Question: ${question}
 
 Answer:`;
 
-    console.log('🤖 Answering question with Gemini...');
+    console.log('Answering question with Gemini...');
     
     const response = await genAI.models.generateContent({
       model: model,
@@ -112,9 +94,8 @@ Answer:`;
     return answer;
     
   } catch (error) {
-    console.error('❌ Gemini Q&A error:', error);
-    
-    // Handle specific Gemini errors
+    console.error('Gemini Q&A error:', error);
+  
     if (error.message?.includes('API_KEY')) {
       throw new Error('Invalid or missing Gemini API key');
     } else if (error.message?.includes('QUOTA_EXCEEDED')) {
@@ -129,22 +110,19 @@ Answer:`;
   }
 };
 
-/**
- * Test Gemini connection
- */
 const testConnection = async () => {
   try {
-    console.log('🧪 Testing Gemini connection...');
+    console.log('Testing Gemini connection');
     
     const response = await genAI.models.generateContent({
       model: 'gemini-2.0-flash-exp',
       contents: 'Say "Hello from Gemini!" if you can read this.',
     });
     
-    console.log('✅ Gemini connection successful:', response.text);
+    console.log('Gemini connection successful:', response.text);
     return true;
   } catch (error) {
-    console.error('❌ Gemini connection failed:', error.message);
+    console.error('Gemini connection failed:', error.message);
     return false;
   }
 };
