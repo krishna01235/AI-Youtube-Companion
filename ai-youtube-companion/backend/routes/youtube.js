@@ -42,51 +42,51 @@ router.get("/search", async (req, res) => {
 router.get("/transcript/:videoId", async (req, res) => {
   try {
     const { videoId } = req.params;
-    const { maxLength, format = 'both' } = req.query;
-    
-    console.log("📥 Transcript request for:", videoId);
-    
-    const result = await getTranscript(videoId);
-    
+    const { language = "en", maxLength, format = "both" } = req.query;
+
+    console.log(" Transcript request for:", videoId, "lang:", language);
+
+    // Pass language into getTranscript
+    const result = await getTranscript(videoId, language);
+
     if (!result || (!result.plainText && !result.structured)) {
-      return res.status(404).json({ 
-        success: false, 
+      return res.status(404).json({
+        success: false,
         message: "No transcript available for this video",
-        videoId 
+        videoId,
       });
     }
-    
-    let transcriptText = result.plainText || '';
+
+    let transcriptText = result.plainText || "";
     let structuredData = result.structured || [];
-    
+
     if (maxLength) {
-      const limit = parseInt(maxLength);
+      const limit = parseInt(maxLength, 10);
       if (transcriptText.length > limit) {
-        transcriptText = transcriptText.substring(0, limit) + '... [truncated]';
+        transcriptText = transcriptText.substring(0, limit) + "... [truncated]";
       }
     }
-    
+
     const response = {
       success: true,
       videoId,
       transcript: transcriptText,
       length: result.plainText?.length || 0,
-      trackInfo: result.trackInfo || {}
+      trackInfo: result.trackInfo || {},
     };
-    
-    if (format === 'both' && structuredData.length > 0) {
+
+    if (format === "both" && structuredData.length > 0) {
       response.structured = structuredData;
     }
-    
+
     res.json(response);
-    
   } catch (error) {
     console.error("Error in /transcript route:", error);
-    res.status(500).json({ 
-      success: false, 
-      message: "Failed to fetch transcript", 
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch transcript",
       error: error.message,
-      videoId: req.params.videoId 
+      videoId: req.params.videoId,
     });
   }
 });
