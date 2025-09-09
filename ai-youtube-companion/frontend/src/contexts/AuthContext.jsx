@@ -3,6 +3,8 @@ import { createContext, useContext, useState, useEffect } from 'react'
 import axios from 'axios'
 
 const AuthContext = createContext()
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
 
 export const useAuth = () => {
   const context = useContext(AuthContext)

@@ -8,6 +8,8 @@ require('dotenv').config();
 console.log('GOOGLE_API_KEY:', process.env.GEMINI_API_KEY);
 
 const app = express();
+app.set('trust proxy', 1); // moved after app creation
+
 const PORT = process.env.PORT || 5000;
 
 const authRoutes = require('./routes/auth');
@@ -24,20 +26,24 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'your-secret-key',
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: true } // Set to true in production with HTTPS
+  cookie: {
+    secure: process.env.NODE_ENV === 'production', // true in production
+    sameSite: 'none',                              // allow cross-site
+    httpOnly: true                                 // prevent JS access
+  }
 }));
+
 app.use(passport.initialize());
 app.use(passport.session());
 
-const FRONTEND_URL = process.env.FRONTEND_URL; // https://ai-youtube-companion.vercel.app
-const BACKEND_URL = process.env.BACKEND_URL;   // https://ai-youtube-companion.onrender.com (or localhost for dev)
+const FRONTEND_URL = process.env.FRONTEND_URL; // e.g., https://ai-youtube-companion.vercel.app
+const BACKEND_URL = process.env.BACKEND_URL;   // e.g., https://ai-youtube-companion.onrender.com
 
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: `${process.env.BACKEND_URL}/auth/google/callback`, 
+  callbackURL: `${BACKEND_URL}/auth/google/callback`,
 }, async (accessToken, refreshToken, profile, done) => {
-  // In a real app, save user to database
   const user = {
     id: profile.id,
     name: profile.displayName,
@@ -48,15 +54,9 @@ passport.use(new GoogleStrategy({
   return done(null, user);
 }));
 
-passport.serializeUser((user, done) => {
-  done(null, user);
-});
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((user, done) => done(null, user));
 
-passport.deserializeUser((user, done) => {
-  done(null, user);
-});
-
-// to check authentication for all routes
 const requireAuth = (req, res, next) => {
   console.log('Auth check - User:', req.user ? 'Authenticated' : 'Not authenticated');
   if (!req.user) {
@@ -65,15 +65,12 @@ const requireAuth = (req, res, next) => {
   next();
 };
 
-// Apply auth middleware to API routes
 // Public routes
 app.use('/auth', authRoutes);
 
 // Protected routes
-// Make sure you have both route files registered
 app.use('/api/youtube', require('./routes/youtube'));
 app.use('/api/gemini', require('./routes/gemini'));
-
 
 // Health check
 app.get('/', (req, res) => {
@@ -84,4 +81,5 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 console.log("Client ID:", process.env.GOOGLE_CLIENT_ID);
+
 module.exports = app;
